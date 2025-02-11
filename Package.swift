@@ -20,8 +20,8 @@ let package = Package(
             teamIdentifier: "6C5J9S87D2",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .magicWand),
-            accentColor: .presetColor(.pink),
+            appIcon: .placeholder(icon: .sun),
+            accentColor: .presetColor(.indigo),
             supportedDeviceFamilies: [
                 .pad,
                 .phone
@@ -40,5 +40,5 @@ let package = Package(
             path: "."
         )
     ],
-    swiftLanguageVersions: [.v6]
+    swiftLanguageVersions: [.version("6")]
 )
