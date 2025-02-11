@@ -2,7 +2,7 @@ import SwiftUI
 
 struct GradientBackgroundView: View {
     var body: some View {
-        LinearGradient(gradient: Gradient(colors: [Color.black.opacity(1.1), Color.purple.opacity(1), Color.black.opacity(1.1)]),
+        LinearGradient(gradient: Gradient(colors: [Color.black.opacity(1.1), Color.black.opacity(0.5), Color.black.opacity(1.1)]),
                        startPoint: .top,
                        endPoint: .bottom)
             .ignoresSafeArea()
@@ -18,6 +18,7 @@ struct GradientBackgroundView_Previews: PreviewProvider {
 
 struct ContentView: View {
     var body: some View {
+        
         GradientBackgroundView()
             .overlay(
                 Text("Welcome to ZenGround")
