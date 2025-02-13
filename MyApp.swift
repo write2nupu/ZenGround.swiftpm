@@ -4,8 +4,8 @@ import SwiftUI
 struct MyApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .background(Color.purple)
+            GlowBackgroundView()
+                .background(.purple)
         }
     }
 }
