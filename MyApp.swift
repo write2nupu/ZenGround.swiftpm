@@ -5,7 +5,6 @@ struct MyApp: App {
     var body: some Scene {
         WindowGroup {
             GlowBackgroundView()
-                .background(.purple)
         }
     }
 }

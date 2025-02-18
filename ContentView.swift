@@ -1,29 +1,17 @@
 import SwiftUI
 
-struct GradientBackgroundView: View {
-    var body: some View {
-        LinearGradient(gradient: Gradient(colors: [Color.black.opacity(1.1), Color.black.opacity(0.5), Color.black.opacity(1.1)]),
-                       startPoint: .top,
-                       endPoint: .bottom)
-            .ignoresSafeArea()
-    }
-}
-
-struct GradientBackgroundView_Previews: PreviewProvider {
-    static var previews: some View {
-        GradientBackgroundView()
-    }
-}
-
 struct GlowBackgroundView: View {
-    @State private var showARScanner = false
+    @State private var showCameraView = false
     @State private var glowRadius: CGFloat = 10
+    
     var body: some View {
         ZStack {
+            Color.purple.edgesIgnoringSafeArea(.all)
             LinearGradient(gradient: Gradient(colors: [Color.black.opacity(1.1), Color.black.opacity(0.5), Color.black.opacity(1.1)]),
                            startPoint: .top,
                            endPoint: .bottom)
                 .ignoresSafeArea()
+            
             VStack {
                 Image("Image")
                     .resizable()
@@ -31,11 +19,9 @@ struct GlowBackgroundView: View {
                     .frame(width: 300, height: 300)
                     .clipShape(Circle()) // Makes the image round
                     .shadow(color: .purple, radius: glowRadius, x: 0, y: 0) // Glow effect animation
-                    .animation(
-                        Animation.easeIn(duration: 1)
-                    )
+                    .animation(Animation.easeIn(duration: 1))
                     .padding(.top,60)
-                
+
                 Text("ZenGround")
                     .font(.largeTitle)
                     .fontWeight(.bold)
@@ -52,14 +38,13 @@ struct GlowBackgroundView: View {
                 Spacer()
                 
                 Button(action: {
-                    // Transition to next screen
-                    showARScanner = true
+                    showCameraView = true
                 }) {
                     Text("Get Started")
                         .font(.title2)
                         .fontWeight(.semibold)
                         .padding()
-                        .frame(width:300,height:55)
+                        .frame(width:300, height:55)
                         .background(Color.white)
                         .foregroundColor(.purple)
                         .cornerRadius(12)
@@ -67,18 +52,11 @@ struct GlowBackgroundView: View {
                 }
                 .padding(.horizontal, 40)
                 .padding(.bottom, 70)
+                .fullScreenCover(isPresented: $showCameraView) {
+                    CaptureFiveObjectsView()
+                }
             }
             .padding()
-            
         }
-        .fullScreenCover(isPresented: $showARScanner) {
-            ARScanView()
-        }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        GlowBackgroundView()
     }
 }
