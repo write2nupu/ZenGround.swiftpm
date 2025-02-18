@@ -16,6 +16,7 @@ struct GradientBackgroundView_Previews: PreviewProvider {
 }
 
 struct GlowBackgroundView: View {
+    @State private var showARScanner = false
     @State private var glowRadius: CGFloat = 10
     var body: some View {
         ZStack {
@@ -52,6 +53,7 @@ struct GlowBackgroundView: View {
                 
                 Button(action: {
                     // Transition to next screen
+                    showARScanner = true
                 }) {
                     Text("Get Started")
                         .font(.title2)
@@ -67,6 +69,10 @@ struct GlowBackgroundView: View {
                 .padding(.bottom, 70)
             }
             .padding()
+            
+        }
+        .fullScreenCover(isPresented: $showARScanner) {
+            ARScanView()
         }
     }
 }
