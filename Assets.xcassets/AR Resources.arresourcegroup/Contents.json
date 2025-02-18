@@ -1,0 +1,23 @@
+{
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "resources" : [
+    {
+      "filename" : "chair.arreferenceimage"
+    },
+    {
+      "filename" : "iMacs.arreferenceimage"
+    },
+    {
+      "filename" : "Macbooks.arreferenceimage"
+    },
+    {
+      "filename" : "plant.arreferenceimage"
+    },
+    {
+      "filename" : "PlantPot.arreferenceimage"
+    }
+  ]
+}
