@@ -17,14 +17,14 @@ struct CaptureFiveObjectsView: View {
                     .ignoresSafeArea()
 
                 VStack {
-                    Spacer().frame(height: 50) // Push content down
+                    Spacer().frame(height: 50)
 
                     Text("Capture 5 Objects You Can See")
                         .font(.title)
                         .multilineTextAlignment(.center)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
-                        .padding(.top, 20) // Extra padding below safe area
+                        .padding(.top, 20)
 
                     // Grid layout for first 3 images
                     LazyVGrid(columns: columns, spacing: 10) {
@@ -37,7 +37,7 @@ struct CaptureFiveObjectsView: View {
                         }
                     }
                     .frame(height: 100)
-                    .padding(.top, 20) // More gap after text
+                    .padding(.top, 20)
 
                     // Centered HStack for the bottom 2 images
                     HStack(spacing: 20) {
@@ -49,14 +49,16 @@ struct CaptureFiveObjectsView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .center) // Centered alignment
-                    .padding(.top, 20) // Extra spacing
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top, 20)
 
-                    Spacer() // Pushes button to bottom
+                    Spacer()
 
                     // Capture Button
                     Button(action: {
                         if capturedImages.count < 5 {
+                            let generator = UIImpactFeedbackGenerator(style: .light)
+                            generator.impactOccurred()
                             showCamera = true
                         }
                     }) {
@@ -73,7 +75,7 @@ struct CaptureFiveObjectsView: View {
                     .padding(.bottom, 20)
                     .disabled(capturedImages.count >= 5)
 
-                    // Continue Button (only when all 5 images are captured)
+                    // Navigation to next screen
                     NavigationLink(destination: TouchFourThingsView(), isActive: $navigateToTouchView) {
                         Text("Continue")
                             .font(.title2)
@@ -93,6 +95,8 @@ struct CaptureFiveObjectsView: View {
                 CameraView(imageCaptured: { image in
                     if capturedImages.count < 5 {
                         capturedImages.append(image)
+                        let generator = UIImpactFeedbackGenerator(style: .medium)
+                        generator.impactOccurred()
                     }
                     if capturedImages.count == 5 {
                         navigateToTouchView = true
