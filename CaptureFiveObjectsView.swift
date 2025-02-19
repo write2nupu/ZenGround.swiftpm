@@ -5,7 +5,7 @@ struct CaptureFiveObjectsView: View {
     @State private var showCamera = false
     @State private var navigateToTouchView = false
 
-    let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())] // 3 columns for top row
+    let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
 
     var body: some View {
         NavigationStack {
@@ -26,7 +26,6 @@ struct CaptureFiveObjectsView: View {
                         .foregroundColor(.white)
                         .padding(.top, 20)
 
-                    // Grid layout for first 3 images
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(capturedImages.prefix(3), id: \.self) { image in
                             Image(uiImage: image)
@@ -39,7 +38,6 @@ struct CaptureFiveObjectsView: View {
                     .frame(height: 100)
                     .padding(.top, 20)
 
-                    // Centered HStack for the bottom 2 images
                     HStack(spacing: 20) {
                         ForEach(capturedImages.dropFirst(3), id: \.self) { image in
                             Image(uiImage: image)
@@ -54,7 +52,6 @@ struct CaptureFiveObjectsView: View {
 
                     Spacer()
 
-                    // Capture Button
                     Button(action: {
                         if capturedImages.count < 5 {
                             let generator = UIImpactFeedbackGenerator(style: .light)
@@ -75,7 +72,6 @@ struct CaptureFiveObjectsView: View {
                     .padding(.bottom, 20)
                     .disabled(capturedImages.count >= 5)
 
-                    // Navigation to next screen
                     NavigationLink(destination: TouchFourThingsView(), isActive: $navigateToTouchView) {
                         Text("Continue")
                             .font(.title2)

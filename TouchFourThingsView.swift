@@ -130,7 +130,6 @@ struct TouchFourThingsView: View {
     }
 }
 
-// Touch Card with Core Haptics
 struct TouchCard: View {
     let name: String
     let imageName: String
@@ -160,7 +159,6 @@ struct TouchCard: View {
     }
 }
 
-// Placeholder for Next Page
 struct NextView: View {
     var body: some View {
         Text("Next Activity")
