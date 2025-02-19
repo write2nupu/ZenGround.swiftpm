@@ -40,7 +40,6 @@ struct TouchFourThingsView: View {
                     }
                     .padding()
 
-                    // Continue Button (Disabled Until All 4 Cards Tapped)
                     NavigationLink(destination: NextView(), isActive: $navigateNext) {
                         Text("Continue")
                             .font(.title2)
