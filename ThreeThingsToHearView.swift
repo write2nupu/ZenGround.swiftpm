@@ -35,7 +35,6 @@ struct ThreeThingsToHearView: View {
                 }
                 
                 Button(action: {
-                    // Navigate to next view (2 things to smell)
                 }) {
                     Text("Continue")
                         .font(.headline)

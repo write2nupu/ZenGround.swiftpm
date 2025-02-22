@@ -1,151 +1,106 @@
 import SwiftUI
-import CoreHaptics
 import AVFoundation
 
-struct TouchFourThingsView: View {
-    @State private var tappedCards: Set<String> = []
-    @State private var navigateNext = false
-    @State private var hapticEngine: CHHapticEngine?
-
-    let items = [
-        ("cotton_image", "soft_buzz"),
-        ("sandpaper_image", "rough_pulses"),
-        ("glass_image", "sharp_taps"),
-        ("wood_image", "random_pulses")
-    ]
-
+struct ThreeThingsToHearView: View {
+    @State private var backgroundColor: Color = .indigo
+    @State private var audioPlayer: AVAudioPlayer?
+    @State private var glowingIndex: Int? = nil
+    @State private var tappedCircles: Set<Int> = []
+    
+    let sounds = ["MorningChirp", "Wind", "Rain"]
+    let colors: [Color] = [.green, .yellow, .mint]
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.mint.edgesIgnoringSafeArea(.all)
-                LinearGradient(gradient: Gradient(colors: [Color.black.opacity(1.1), Color.black.opacity(0.5), Color.black.opacity(1.1)]),
-                               startPoint: .top,
-                               endPoint: .bottom)
-                    .ignoresSafeArea()
-
-                VStack {
-                    Text("Touch and Feel the 4 Vibrations")
-                        .font(.title)
-                        .multilineTextAlignment(.center)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.bottom, 10)
-
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                        ForEach(items, id: \.0) { item in
-                            TouchCard(imageName: item.0, hapticType: item.1) {
-                                tappedCards.insert(item.0)
-                                playHapticFeedback(for: item.1)
-                            }
-                        }
+        ZStack {
+            backgroundColor
+                .ignoresSafeArea()
+            
+            LinearGradient(gradient: Gradient(colors: [Color.black.opacity(1.1), Color.black.opacity(0.5), Color.black.opacity(1.1)]),
+                           startPoint: .top,
+                           endPoint: .bottom)
+            .ignoresSafeArea()
+            
+            VStack(spacing: 50) {
+                Text("The Power of 3 Sounds - Tap, Listen, Glow")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.white)
+                    .padding(.bottom, 10)
+                
+                ForEach(0..<3, id: \ .self) { index in
+                    GlowingSoundButton(isGlowing: glowingIndex == index, color: colors[index]) {
+                        handleTap(index: index)
                     }
-                    .padding()
-
-                    NavigationLink(destination: ThreeThingsToHearView(), isActive: $navigateNext) {
-                        Text("Continue")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .padding()
-                            .frame(width: 250, height: 55)
-                            .background(tappedCards.count == 4 ? Color.white : Color.gray)
-                            .foregroundColor(.mint)
-                            .cornerRadius(12)
-                            .shadow(radius: 5)
-                    }
-                    .disabled(tappedCards.count < 4)
-                    .padding(.top, 30)
                 }
-            }
-            .onAppear {
-                prepareHaptics()
+                
+                NavigationLink(destination: TwoThingsToSmellView()) {
+                    Text("Continue")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(width: 220, height: 50)
+                        .background(tappedCircles.count == 3 ? Color.blue : Color.gray)
+                        .cornerRadius(12)
+                        .shadow(radius: 5)
+                }
+                .disabled(tappedCircles.count < 3)
             }
         }
     }
-
-    func prepareHaptics() {
-        do {
-            hapticEngine = try CHHapticEngine()
-            try hapticEngine?.start()
-        } catch {
-            print("Haptic Engine Error: \(error.localizedDescription)")
+    
+    func handleTap(index: Int) {
+        if glowingIndex == index {
+            // If the same button is tapped again, stop the music and remove glow
+            stopSound()
+            glowingIndex = nil
+            backgroundColor = .indigo
+        } else {
+            // Play the new sound and update the UI
+            playSound(named: sounds[index])
+            backgroundColor = colors[index]
+            glowingIndex = index
+            tappedCircles.insert(index)
         }
     }
-
-    func playHapticFeedback(for type: String) {
-        guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
-
-        var events = [CHHapticEvent]()
-
-        switch type {
-        case "soft_buzz":
-            let softBuzz = CHHapticEvent(eventType: .hapticContinuous, parameters: [
-                CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.3),
-                CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.2)
-            ], relativeTime: 0, duration: 0.3)
-            events.append(softBuzz)
-
-        case "rough_pulses":
-            for i in stride(from: 0, to: 0.5, by: 0.1) {
-                let pulse = CHHapticEvent(eventType: .hapticTransient, parameters: [
-                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.8),
-                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.9)
-                ], relativeTime: i)
-                events.append(pulse)
+    
+    func playSound(named sound: String) {
+        if let url = Bundle.main.url(forResource: sound, withExtension: "mp3") {
+            do {
+                audioPlayer?.stop()
+                audioPlayer = try AVAudioPlayer(contentsOf: url)
+                audioPlayer?.play()
+            } catch {
+                print("Error loading sound")
             }
-
-        case "sharp_taps":
-            for i in stride(from: 0, to: 0.4, by: 0.1) {
-                let tap = CHHapticEvent(eventType: .hapticTransient, parameters: [
-                    CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.5),
-                    CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.7)
-                ], relativeTime: i)
-                events.append(tap)
-            }
-
-        case "random_pulses":
-            for i in stride(from: 0, to: 0.6, by: 0.15) {
-                let intensity = Float.random(in: 0.5...1.0)
-                let sharpness = Float.random(in: 0.4...1.0)
-                let pulse = CHHapticEvent(eventType: .hapticTransient, parameters: [
-                    CHHapticEventParameter(parameterID: .hapticIntensity, value: intensity),
-                    CHHapticEventParameter(parameterID: .hapticSharpness, value: sharpness)
-                ], relativeTime: i)
-                events.append(pulse)
-            }
-
-        default:
-            break
+        } else {
+            print("Could not find sound file: \(sound).mp3")
         }
-
-        do {
-            let pattern = try CHHapticPattern(events: events, parameters: [])
-            let player = try hapticEngine?.makePlayer(with: pattern)
-            try player?.start(atTime: CHHapticTimeImmediate)
-        } catch {
-            print("Haptic Feedback Error: \(error.localizedDescription)")
-        }
+    }
+    
+    func stopSound() {
+        audioPlayer?.stop()
     }
 }
 
-struct TouchCard: View {
-    let imageName: String
-    let hapticType: String
-    var onTap: () -> Void
-
+struct GlowingSoundButton: View {
+    var isGlowing: Bool
+    var color: Color
+    var action: () -> Void
+    
     var body: some View {
-        Button(action: {
-            onTap()
-        }) {
-            Image(imageName)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 200, height: 200) // Match card size
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.white.opacity(0.8), lineWidth: 2)
-                )
-        }
-        .frame(width: 250, height: 250)
+        Circle()
+            .fill(color)
+            .frame(width: 90, height: 90)
+            .overlay(
+                Circle()
+                    .stroke(color.opacity(isGlowing ? 0.8 : 0), lineWidth: 10)
+                    .blur(radius: 8)
+                    .animation(isGlowing ? Animation.easeInOut(duration: 1).repeatForever(autoreverses: true) : .default, value: isGlowing)
+            )
+            .onTapGesture {
+                action()
+            }
+            .shadow(radius: 10)
     }
 }
