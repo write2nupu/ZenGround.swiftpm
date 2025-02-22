@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreHaptics
+import AVFoundation
 
 struct TouchFourThingsView: View {
     @State private var tappedCards: Set<String> = []
@@ -7,10 +8,10 @@ struct TouchFourThingsView: View {
     @State private var hapticEngine: CHHapticEngine?
 
     let items = [
-        ("Cotton", "cotton_image", "soft_buzz"),
-        ("Sandpaper", "sandpaper_image", "rough_pulses"),
-        ("Glass", "glass_image", "sharp_taps"),
-        ("Wood", "wood_image", "random_pulses")
+        ("cotton_image", "soft_buzz"),
+        ("sandpaper_image", "rough_pulses"),
+        ("glass_image", "sharp_taps"),
+        ("wood_image", "random_pulses")
     ]
 
     var body: some View {
@@ -23,7 +24,7 @@ struct TouchFourThingsView: View {
                     .ignoresSafeArea()
 
                 VStack {
-                    Text("Touch 4 Things")
+                    Text("Touch and Feel the 4 Vibrations")
                         .font(.title)
                         .multilineTextAlignment(.center)
                         .fontWeight(.bold)
@@ -32,15 +33,15 @@ struct TouchFourThingsView: View {
 
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                         ForEach(items, id: \.0) { item in
-                            TouchCard(name: item.0, imageName: item.1, hapticType: item.2) {
+                            TouchCard(imageName: item.0, hapticType: item.1) {
                                 tappedCards.insert(item.0)
-                                playHapticFeedback(for: item.2)
+                                playHapticFeedback(for: item.1)
                             }
                         }
                     }
                     .padding()
 
-                    NavigationLink(destination: NextView(), isActive: $navigateNext) {
+                    NavigationLink(destination: ThreeThingsToHearView(), isActive: $navigateNext) {
                         Text("Continue")
                             .font(.title2)
                             .fontWeight(.semibold)
@@ -77,7 +78,6 @@ struct TouchFourThingsView: View {
 
         switch type {
         case "soft_buzz":
-            // Gentle, continuous buzz for 0.3 sec
             let softBuzz = CHHapticEvent(eventType: .hapticContinuous, parameters: [
                 CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.3),
                 CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.2)
@@ -85,7 +85,6 @@ struct TouchFourThingsView: View {
             events.append(softBuzz)
 
         case "rough_pulses":
-            // Strong, rough pulses for 0.5 sec
             for i in stride(from: 0, to: 0.5, by: 0.1) {
                 let pulse = CHHapticEvent(eventType: .hapticTransient, parameters: [
                     CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.8),
@@ -95,7 +94,6 @@ struct TouchFourThingsView: View {
             }
 
         case "sharp_taps":
-            // Light, sharp taps for 0.4 sec
             for i in stride(from: 0, to: 0.4, by: 0.1) {
                 let tap = CHHapticEvent(eventType: .hapticTransient, parameters: [
                     CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.5),
@@ -105,7 +103,6 @@ struct TouchFourThingsView: View {
             }
 
         case "random_pulses":
-            // Randomized pulses for 0.6 sec
             for i in stride(from: 0, to: 0.6, by: 0.15) {
                 let intensity = Float.random(in: 0.5...1.0)
                 let sharpness = Float.random(in: 0.4...1.0)
@@ -131,7 +128,6 @@ struct TouchFourThingsView: View {
 }
 
 struct TouchCard: View {
-    let name: String
     let imageName: String
     let hapticType: String
     var onTap: () -> Void
@@ -140,30 +136,16 @@ struct TouchCard: View {
         Button(action: {
             onTap()
         }) {
-            VStack {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .cornerRadius(12)
-
-                Text(name)
-                    .foregroundColor(.white)
-                    .font(.headline)
-            }
-            .padding()
-            .background(Color.white.opacity(0.2))
-            .cornerRadius(12)
-            .shadow(radius: 5)
+            Image(imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 200, height: 200) // Match card size
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.white.opacity(0.8), lineWidth: 2)
+                )
         }
-    }
-}
-
-struct NextView: View {
-    var body: some View {
-        Text("Next Activity")
-            .font(.largeTitle)
-            .foregroundColor(.white)
-            .background(Color.black.ignoresSafeArea())
+        .frame(width: 250, height: 250)
     }
 }
