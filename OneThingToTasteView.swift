@@ -43,10 +43,6 @@ struct OneThingToTasteView: View {
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
                             .padding()
-                        
-                        Button("Close") {
-                            presentationMode.wrappedValue.dismiss()
-                        }
                         .padding()
                         .background(Color.white)
                         .foregroundColor(.blue)

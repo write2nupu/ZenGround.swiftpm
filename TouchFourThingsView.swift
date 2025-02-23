@@ -51,12 +51,10 @@ struct TouchFourThingsView: View {
     
     func handleTap(index: Int) {
         if glowingIndex == index {
-            // If the same button is tapped again, stop the music and remove glow
             stopSound()
             glowingIndex = nil
             backgroundColor = .indigo
         } else {
-            // Play the new sound and update the UI
             playSound(named: sounds[index])
             backgroundColor = colors[index]
             glowingIndex = index
