@@ -1,7 +1,7 @@
 import SwiftUI
 import AVFoundation
 
-struct ThreeThingsToHearView: View {
+struct TouchFourThingsView: View {
     @State private var backgroundColor: Color = .indigo
     @State private var audioPlayer: AVAudioPlayer?
     @State private var glowingIndex: Int? = nil
